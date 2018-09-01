@@ -29,8 +29,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.CRC32;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import launcher.LauncherAPI;
 import launcher.hasher.HashedDir;
@@ -248,7 +247,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
             }
         }
     }
-    private static Logger logger = LogManager.getLogger("LaunchServer");
+    private static Logger logger = LogHelper.factory.getLogger("LaunchServer");
     public static void main(String... args) throws Throwable {
         JVMHelper.verifySystemProperties(LaunchServer.class, true);
         LogHelper.addOutput(IOHelper.WORKING_DIR.resolve("LaunchServer.log"));
@@ -261,7 +260,7 @@ public final class LaunchServer implements Runnable, AutoCloseable {
                 lsrv.run();
             }
         } catch (Throwable exc) {
-            logger.error(exc);
+            logger.error("Err: ", exc);
             return;
         }
         Instant end = Instant.now();
@@ -326,7 +325,6 @@ public final class LaunchServer implements Runnable, AutoCloseable {
 
     public LaunchServer(Path dir, boolean portable) throws IOException, InvalidKeySpecException {
         //setScriptBindings();
-        LogHelper.logInit(false);
         this.portable = portable;
 
         // Setup config locations
@@ -451,22 +449,22 @@ public final class LaunchServer implements Runnable, AutoCloseable {
         try {
             config.authHandler.close();
         } catch (IOException e) {
-            logger.error(e);
+            logger.error("Err: ", e);
         }
         try {
             config.authProvider.close();
         } catch (IOException e) {
-            logger.error(e);
+        	logger.error("Err: ", e);
         }
         try {
             config.textureProvider.close();
         } catch (IOException e) {
-            logger.error(e);
+        	logger.error("Err: ", e);
         }
         try {
             config.hwidHandler.close();
         } catch (IOException e) {
-            logger.error(e);
+        	logger.error("Err: ", e);
         }
         modulesManager.close();
         // Print last message before death :(

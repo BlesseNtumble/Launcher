@@ -6,25 +6,20 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Color;
 import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.AnsiOutputStream;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.event.Level;
+import org.slf4j.impl.SimpleLoggerFactory;
 
 import launcher.LauncherAPI;
 import launcher.LauncherVersion;
@@ -62,17 +57,19 @@ public final class LogHelper {
             }
         }
     }
-    private static Logger logger = LogManager.getLogger("LogHelper");
-
+    @LauncherAPI
+    public static ILoggerFactory factory;
+    private static Logger logger;
+    static {
+    	factory = new SimpleLoggerFactory();
+    	logger = factory.getLogger("Launcher");
+    }
     @LauncherAPI
     public static final String DEBUG_PROPERTY = "launcher.debug";
     @LauncherAPI
     public static final String NO_JANSI_PROPERTY = "launcher.noJAnsi";
     @LauncherAPI
     public static final boolean JANSI;
-    // Output settings
-    @SuppressWarnings("unused")
-	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss", Locale.US);
 
     private static final AtomicBoolean DEBUG_ENABLED = new AtomicBoolean(Boolean.getBoolean(DEBUG_PROPERTY));
 
@@ -185,21 +182,26 @@ public final class LogHelper {
 
     @LauncherAPI
     public static void log(Level level, String message, boolean sub) {
-        logger.log(level,message);
-    }
-
-    public static void logInit(boolean isClientMode)
-    {
-        LoggerContext context = (LoggerContext) LogManager.getContext(false);
-        Configuration cfg = context.getConfiguration();
-        LoggerConfig config = cfg.getRootLogger();
-        config.removeAppender("SimpleConsole");
-        Appender appender = cfg.getAppender("Console");
-        if(!isClientMode)
-        if(JVMHelper.OS_TYPE == JVMHelper.OS.LINUX || JVMHelper.OS_TYPE == JVMHelper.OS.MACOSX)
-        config.addAppender(appender,Level.DEBUG, cfg.getFilter());
-        context.updateLoggers();
-        //context.reconfigure();
+        switch (level) {
+        case DEBUG: 
+        	logger.debug(message);
+        	break;
+        case ERROR: 
+        	
+        	break;
+        case WARN: 
+        	
+        	break;
+        case INFO: 
+        	
+        	break;
+        case TRACE: 
+        	
+        	break;
+        default:
+        	
+        	break;
+        }
     }
 
     @LauncherAPI

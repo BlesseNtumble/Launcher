@@ -3,6 +3,8 @@ subprojects {
 		compileOnly project(':LaunchServer')
 		compileOnly 'org.javassist:javassist:3.23.1-GA'
 		compileOnly 'org.ow2.asm:asm-debug-all:5.0.4'
+		compileOnly 'org.slf4j:slf4j-simple:1.7.25'
+		compileOnly 'org.slf4j:slf4j-api:1.7.25'
 	}
 	jar {
 		from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
